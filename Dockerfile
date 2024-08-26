@@ -1,34 +1,31 @@
+# Select the Node.js base image
 FROM node:20
 
-RUN mkdir /zeppelin
-RUN chown node:node /zeppelin
-
+# Create the directory structure
+RUN mkdir /zeppelin && chown node:node /zeppelin
 USER node
 
-ARG API_URL
-
-# Install dependencies before copying over any other files
-COPY --chown=node:node package.json package-lock.json /zeppelin
-RUN mkdir /zeppelin/backend
-COPY --chown=node:node backend/package.json /zeppelin/backend
-RUN mkdir /zeppelin/shared
-COPY --chown=node:node shared/package.json /zeppelin/shared
-RUN mkdir /zeppelin/dashboard
-COPY --chown=node:node dashboard/package.json /zeppelin/dashboard
-
+# Copy package files and install dependencies
+COPY --chown=node:node package.json package-lock.json /zeppelin/
 WORKDIR /zeppelin
 RUN npm ci
 
+# Copy the application code
 COPY --chown=node:node . /zeppelin
 
-# Build backend
+# Build the backend and dashboard
 WORKDIR /zeppelin/backend
 RUN npm run build
-
-# Build dashboard
 WORKDIR /zeppelin/dashboard
 RUN npm run build
 
 # Prune dev dependencies
 WORKDIR /zeppelin
 RUN npm prune --omit=dev
+
+# Copy the start-all script and make it executable
+COPY --chown=node:node start-all.sh /zeppelin/start-all.sh
+RUN chmod +x /zeppelin/start-all.sh
+
+# Command to run all services
+CMD ["./start-all.sh"]
