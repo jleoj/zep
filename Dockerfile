@@ -22,10 +22,3 @@ RUN npm run build
 # Prune dev dependencies
 WORKDIR /zeppelin
 RUN npm prune --omit=dev
-
-# Copy the start-all script and make it executable
-COPY --chown=node:node start-all.sh /zeppelin/start-all.sh
-RUN chmod +x /zeppelin/start-all.sh
-
-# Command to run all services
-CMD ["./start-all.sh"]
