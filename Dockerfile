@@ -1,21 +1,31 @@
-# Select the Node.js base image
 FROM node:20
 
-# Create the directory structure
-RUN mkdir /zeppelin && chown node:node /zeppelin
+RUN mkdir /zeppelin
+RUN chown node:node /zeppelin
+
 USER node
 
-# Copy package files and install dependencies
-COPY --chown=node:node package.json package-lock.json /zeppelin/
+ARG API_URL
+
+# Install dependencies before copying over any other files
+COPY --chown=node:node package.json package-lock.json /zeppelin
+RUN mkdir /zeppelin/backend
+COPY --chown=node:node backend/package.json /zeppelin/backend
+RUN mkdir /zeppelin/shared
+COPY --chown=node:node shared/package.json /zeppelin/shared
+RUN mkdir /zeppelin/dashboard
+COPY --chown=node:node dashboard/package.json /zeppelin/dashboard
+
 WORKDIR /zeppelin
 RUN npm ci
 
-# Copy the application code
 COPY --chown=node:node . /zeppelin
 
-# Build the backend and dashboard
+# Build backend
 WORKDIR /zeppelin/backend
 RUN npm run build
+
+# Build dashboard
 WORKDIR /zeppelin/dashboard
 RUN npm run build
 
