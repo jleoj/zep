@@ -48,6 +48,18 @@ import { MINUTES, SECONDS, errorMessage, isDiscordAPIError, isDiscordHTTPError, 
 import { DecayingCounter } from "./utils/DecayingCounter";
 import { enableProfiling } from "./utils/easyProfiler";
 import { loadYamlSafely } from "./utils/loadYamlSafely";
+import express from 'express';
+
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+  res.send('Bot is running!');
+});
+
+app.listen(port, () => {
+  console.log(`Express server is running on port ${port}`);
+});
 
 // Error handling
 let recentPluginErrors = 0;
