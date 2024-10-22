@@ -32,3 +32,5 @@ RUN npm run build
 # Prune dev dependencies
 WORKDIR /zeppelin
 RUN npm prune --omit=dev
+
+EXPOSE 3002
