@@ -473,3 +473,8 @@ connect().then(async () => {
     });
   }
 });
+
+import { ActivityType } from "discord.js";
+client.user?.setPresence({
+  activities: [{ name: "zep: the movie", type: ActivityType.Watching }],
+});
